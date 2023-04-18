@@ -7,6 +7,19 @@ import java.util.Map;
 
 import static com.canvas.lox.TokenType.*;
 
+/**
+ * A Tokenizer for the Lox language <br/>
+ * Usage:
+ * <pre>
+ * {@code
+ *     var scanner = new Scanner(sourceCode);
+ *     List<Token> tokens = scanner.scanTokens();
+ *
+ *      for (var token : tokens) {
+ *      System.out.println(token);
+ * }
+ * </pre>
+ */
 public class Scanner {
     private final String source;
     private final List<Token> tokens = new ArrayList<>();
@@ -130,7 +143,7 @@ public class Scanner {
                 } else if (isAlpha(c)) { // checks for an identifier
                     identifier();
                 } else {
-                Lox.error(line, "Unexpected character");
+                Lox.error(line, "Unexpected character: " + c);
                 }
                 break;
         }
