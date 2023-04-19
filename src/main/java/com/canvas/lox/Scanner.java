@@ -16,7 +16,8 @@ import static com.canvas.lox.TokenType.*;
  *     List<Token> tokens = scanner.scanTokens();
  *
  *      for (var token : tokens) {
- *      System.out.println(token);
+ *         System.out.println(token);
+ *      }
  * }
  * </pre>
  */
