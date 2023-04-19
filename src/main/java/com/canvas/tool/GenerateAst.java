@@ -22,9 +22,19 @@ public class GenerateAst {
                 "Unary      : Token operator, Expr right"
         ));
 
-        System.out.println("Finished");
+        System.out.printf("Finished Generating to %s\n", outputDir);
     }
 
+    /**
+     * A function that generates AST classes for the lox interpreter and writes to a file
+     * @param outputDir The directory to write a file in
+     * @param baseName  The name of the abstract class that encapsulates the other generates classes,
+     *                  it is also used as the name for the generates file
+     * @param types     The types to generate as in the following format: <br/>
+     *                  <code>ClassName   : Type1 param1, Type2 param2, ...etc</code>
+     * @throws IOException  If the output directory (outputDir argument) does not exist,
+     *                      the function will fail to create a file
+     */
     private static void defineAst(
             String outputDir,
             String baseName,
@@ -50,6 +60,13 @@ public class GenerateAst {
         writer.close();
     }
 
+    /**
+     * Helper function for defineAst
+     * @param writer    the file writer
+     * @param baseClass the name of the encapsulating class
+     * @param className the name of the encapsulated class
+     * @param fieldList the list of fields as in a java function declaration
+     */
     private static void defineType(
             PrintWriter writer,
             String baseClass,
