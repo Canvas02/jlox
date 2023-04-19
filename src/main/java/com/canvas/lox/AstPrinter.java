@@ -1,9 +1,15 @@
 package com.canvas.lox;
 
 /**
- * A visitor class that pretty prints lox ASTs
- *
- * Note: This may go unmaintained in the future (as it's not maintained in the book)
+ * A visitor class that pretty prints lox ASTs <br/>
+ * Note: This may go unmaintained in the future (as it's not maintained in the book) <br/>
+ * Usage:
+ * <pre>
+ * {@code
+ *      Expr expression = ...;
+ *      System.out.println(new AstPrinter().print(expression));
+ * }
+ * </pre>
  * @see Expr
  */
 public class AstPrinter implements Expr.Visitor<String> {
