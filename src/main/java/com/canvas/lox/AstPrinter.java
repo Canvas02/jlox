@@ -14,7 +14,10 @@ package com.canvas.lox;
  */
 public class AstPrinter implements Expr.Visitor<String> {
     String print(Expr expr) {
-        return expr.accept(this);
+        if (expr != null)
+            return expr.accept(this);
+        else
+            return null;
     }
 
     @Override

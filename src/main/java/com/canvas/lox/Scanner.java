@@ -89,25 +89,26 @@ public class Scanner {
         char c = advance();
         switch (c) {
             // Single character lexemes
-            case '(': addToken(LEFT_PEREN); break;
-            case ')': addToken(RIGHT_PAREN); break;
-            case '{': addToken(LEFT_BRACE); break;
-            case '}': addToken(RIGHT_BRACE); break;
-            case ',': addToken(COMMA); break;
-            case '.': addToken(DOT); break;
-            case '-': addToken(MINUS); break;
-            case '+': addToken(PLUS); break;
-            case ';': addToken(SEMICOLIN); break;
-            case '*': addToken(STAR); break;
+            case '(' -> addToken(LEFT_PEREN); 
+            case ')' -> addToken(RIGHT_PAREN); 
+            case '{' -> addToken(LEFT_BRACE); 
+            case '}' -> addToken(RIGHT_BRACE); 
+            case ',' -> addToken(COMMA); 
+            case '.' -> addToken(DOT); 
+            case '-' -> addToken(MINUS); 
+            case '+' -> addToken(PLUS); 
+            case ';' -> addToken(SEMICOLIN); 
+            case '*' -> addToken(STAR); 
 
             // Single or double character lexemes
-            case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;
-            case '=': addToken(match('=') ? EQUAL_EQUAL : EQUAL); break;
-            case '<': addToken(match('=') ? LESS_EQUAL : LESS); break;
-            case '>': addToken(match('=') ? GREATER_EQUAL : GREATER); break;
+            case '!' -> addToken(match('=') ? BANG_EQUAL : BANG); 
+            case '=' -> addToken(match('=') ? EQUAL_EQUAL : EQUAL); 
+            case '<' -> addToken(match('=') ? LESS_EQUAL : LESS); 
+            case '>' -> addToken(match('=') ? GREATER_EQUAL : GREATER); 
 
             // Longer lexemes
-            case '/':
+            case '/' -> {
+                
                 if (match('/')) {   // a line comment (spans until the end of the line)
                     // Skip until end of line
                     // TODO: Support other line endings (ie. CRLF, ..)
@@ -115,30 +116,25 @@ public class Scanner {
                 } else {
                     addToken(SLASH);
                 }
-                break;
+            }
 
             // Meaningless characters
             // Ignore whitespace
-            case ' ':
-            case '\r':
-            case '\t':
-                break;
-
-            case '\n':
-                line++;
-                break;
+            case ' ', '\r', '\t', '\n' -> line++;
+                
 
             // Strings
-            case '"': string(); break;
+            case '"' -> string();
 
             // Reserved words
-            case 'o': // OR
+            case 'o' -> { // OR
                 if (match('r')) {
                     addToken(OR);
                 }
-                break;
+            }
+                
 
-            default: // Contains number handling + invalid input handling
+            default -> { // Contains number handling + invalid input handling
                 if (isDigit(c)) {
                     number();
                 } else if (isAlpha(c)) { // checks for an identifier
@@ -146,7 +142,8 @@ public class Scanner {
                 } else {
                 Lox.error(line, "Unexpected character: " + c);
                 }
-                break;
+            }
+
         }
     }
 
