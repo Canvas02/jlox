@@ -26,12 +26,13 @@ public class Helper {
         System.exit(-1);
     }
 
-    public static void unimplemented() {
+    public static Object unimplemented() {
         // Can't use getLineNumber here, because then that would add to the stack
         System.err.printf(
                 "fatal: unimplemented code reached at %s\n",
                 Thread.currentThread().getStackTrace()[2].toString()
         );
         System.exit(-2);
+        return null;
     }
 }
