@@ -71,9 +71,9 @@ public class GenerateAst {
     /**
      * Helper function for defineAst
      *
-     * @param writer    the file writer
+     * @param writer   the file writer
      * @param baseName the name of the encapsulating class
-     * @param types The types to generate visitor functions for
+     * @param types    The types to generate visitor functions for
      */
     private static void defineVisitor(PrintWriter writer, String baseName, List<String> types) {
         writer.println("    interface Visitor<R> {");

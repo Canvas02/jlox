@@ -9,9 +9,12 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Lox {
-    static boolean hadError = false;
+    private static boolean hadError = false;
+    private static boolean hadRuntimeError = false;
 
-    public static void main(String[] args) throws IOException {
+    private static final Interpreter interpreter = new Interpreter();
+
+    public static void main(String[] args) throws IOException, Helper.Unreachable {
         if (args.length > 1) {
             System.out.println("Usage: jlox [script]");
             System.exit(64);
@@ -27,6 +30,7 @@ public class Lox {
         run(new String(bytes, Charset.defaultCharset()));
 
         if (hadError) System.exit(64);
+        if (hadRuntimeError) System.exit(70);
     }
 
     // REPL
@@ -53,7 +57,8 @@ public class Lox {
 
         if (hadError) return;
 
-        System.out.println(new AstPrinter().print(expression));
+        // System.out.println(new AstPrinter().print(expression));
+        interpreter.interpret(expression);
     }
 
     static void error(int line, String message) {
@@ -72,10 +77,16 @@ public class Lox {
         }
     }
 
+    public static void runtimeError(RuntimeError error) {
+        System.err.printf("%s\n[line %d]\n", error.getMessage(), error.token.line);
+        hadRuntimeError = true;
+    }
+
     private static void report(int line, String where, String msg) {
         System.err.println(
                 "[line " + line + "] Error" + where + ": " + msg
         );
         hadError = true;
     }
+
 }

@@ -1,8 +1,8 @@
 package com.canvas.lox;
 
-import java.util.List;
-
 abstract class Expr {
+    abstract <R> R accept(Visitor<R> visitor);
+
     interface Visitor<R> {
         R visitBinaryExpr(Binary expr);
 
@@ -74,6 +74,4 @@ abstract class Expr {
             return visitor.visitUnaryExpr(this);
         }
     }
-
-    abstract <R> R accept(Visitor<R> visitor);
 }

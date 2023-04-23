@@ -22,13 +22,6 @@ import static com.canvas.lox.TokenType.*;
  * </pre>
  */
 public class Scanner {
-    private final String source;
-    private final List<Token> tokens = new ArrayList<>();
-
-    private int start = 0;
-    private int current = 0;
-    private int line = 1;
-
     private static final Map<String, TokenType> keywords;
 
     static {
@@ -51,8 +44,15 @@ public class Scanner {
         keywords.put("while", WHILE);
     }
 
+    private final String source;
+    private final List<Token> tokens = new ArrayList<>();
+    private int start = 0;
+    private int current = 0;
+    private int line = 1;
+
     /**
      * Constructs a Scanner (Tokenizer)
+     *
      * @param source The source code for the wanted program
      */
     Scanner(String source) {
@@ -61,6 +61,7 @@ public class Scanner {
 
     /**
      * Scans the source to tokens
+     *
      * @return The list of token scanned from the source
      */
     List<Token> scanTokens() {
@@ -76,6 +77,7 @@ public class Scanner {
 
     /**
      * Checks if EOF was reached
+     *
      * @return The value
      */
     private boolean isAtEnd() {
@@ -89,26 +91,26 @@ public class Scanner {
         char c = advance();
         switch (c) {
             // Single character lexemes
-            case '(' -> addToken(LEFT_PEREN); 
-            case ')' -> addToken(RIGHT_PAREN); 
-            case '{' -> addToken(LEFT_BRACE); 
-            case '}' -> addToken(RIGHT_BRACE); 
-            case ',' -> addToken(COMMA); 
-            case '.' -> addToken(DOT); 
-            case '-' -> addToken(MINUS); 
-            case '+' -> addToken(PLUS); 
-            case ';' -> addToken(SEMICOLIN); 
-            case '*' -> addToken(STAR); 
+            case '(' -> addToken(LEFT_PEREN);
+            case ')' -> addToken(RIGHT_PAREN);
+            case '{' -> addToken(LEFT_BRACE);
+            case '}' -> addToken(RIGHT_BRACE);
+            case ',' -> addToken(COMMA);
+            case '.' -> addToken(DOT);
+            case '-' -> addToken(MINUS);
+            case '+' -> addToken(PLUS);
+            case ';' -> addToken(SEMICOLIN);
+            case '*' -> addToken(STAR);
 
             // Single or double character lexemes
-            case '!' -> addToken(match('=') ? BANG_EQUAL : BANG); 
-            case '=' -> addToken(match('=') ? EQUAL_EQUAL : EQUAL); 
-            case '<' -> addToken(match('=') ? LESS_EQUAL : LESS); 
-            case '>' -> addToken(match('=') ? GREATER_EQUAL : GREATER); 
+            case '!' -> addToken(match('=') ? BANG_EQUAL : BANG);
+            case '=' -> addToken(match('=') ? EQUAL_EQUAL : EQUAL);
+            case '<' -> addToken(match('=') ? LESS_EQUAL : LESS);
+            case '>' -> addToken(match('=') ? GREATER_EQUAL : GREATER);
 
             // Longer lexemes
             case '/' -> {
-                
+
                 if (match('/')) {   // a line comment (spans until the end of the line)
                     // Skip until end of line
                     // TODO: Support other line endings (ie. CRLF, ..)
@@ -121,7 +123,7 @@ public class Scanner {
             // Meaningless characters
             // Ignore whitespace
             case ' ', '\r', '\t', '\n' -> line++;
-                
+
 
             // Strings
             case '"' -> string();
@@ -132,7 +134,7 @@ public class Scanner {
                     addToken(OR);
                 }
             }
-                
+
 
             default -> { // Contains number handling + invalid input handling
                 if (isDigit(c)) {
@@ -140,7 +142,7 @@ public class Scanner {
                 } else if (isAlpha(c)) { // checks for an identifier
                     identifier();
                 } else {
-                Lox.error(line, "Unexpected character: " + c);
+                    Lox.error(line, "Unexpected character: " + c);
                 }
             }
 
@@ -199,6 +201,7 @@ public class Scanner {
 
     /**
      * Advances ths index to the next character in the source
+     *
      * @return The consumed character
      */
     private char advance() {
@@ -207,6 +210,7 @@ public class Scanner {
 
     /**
      * Adds a token to the list of tokens stored, with a literal of null
+     *
      * @param type The token type
      */
     private void addToken(TokenType type) {
@@ -215,7 +219,8 @@ public class Scanner {
 
     /**
      * Adds a token to the list of tokens stored
-     * @param type The token type
+     *
+     * @param type    The token type
      * @param literal Only used by literals for the value of a literal
      */
     private void addToken(TokenType type, Object literal) {
@@ -226,9 +231,10 @@ public class Scanner {
     /**
      * Checks if the provided character match the one in the source,
      * if it matches it consumes the character and advanced to the next
+     *
      * @param expected The expected character
      * @return The result
-    */
+     */
     private boolean match(char expected) {
         if (isAtEnd()) return false;
         if (source.charAt(current) != expected) return false;
@@ -239,8 +245,9 @@ public class Scanner {
 
     /**
      * Returns the character at the current index without consuming it
+     *
      * @return The character at the current index
-    */
+     */
     private char peek() {
         if (isAtEnd()) return '\0';
         return source.charAt(current);
@@ -248,6 +255,7 @@ public class Scanner {
 
     /**
      * Returns the next character from the current index without consuming it
+     *
      * @return The next character from the current index
      */
     private char peekNext() {
@@ -257,19 +265,21 @@ public class Scanner {
 
     /**
      * Checks if a character is an alphabet character and not a number or symbol
+     *
      * @param c The checked character
-     * @return  The result
+     * @return The result
      */
     private boolean isAlpha(char c) {
         return (c >= 'a' && c <= 'z') ||
-               (c >= 'A' && c <= 'Z') ||
+                (c >= 'A' && c <= 'Z') ||
                 c == '_';
     }
 
     /**
      * Checks if a character is a number or an alphabet character and not a symbol
+     *
      * @param c The checked character
-     * @return  The result
+     * @return The result
      */
     private boolean isAlphaNumeric(char c) {
         return isAlpha(c) || isDigit(c);
@@ -277,8 +287,9 @@ public class Scanner {
 
     /**
      * Checks if a character is a number and not a alphabet character or symbol
+     *
      * @param c The checked character
-     * @return  The result
+     * @return The result
      */
     private boolean isDigit(char c) {
         return c >= '0' && c <= '9';

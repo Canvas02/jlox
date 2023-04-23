@@ -33,10 +33,7 @@ public class Parser {
     // primary        → NUMBER | STRING | "true" | "false" | "nil"
     //               | "(" expression ")"
 
-    private static class ParseError extends RuntimeException {}
-
     private final List<Token> tokens;
-
     /**
      * The next token that's going to be parsed
      */
@@ -48,7 +45,8 @@ public class Parser {
 
     /**
      * Parses the source code and return an AST
-     * @return The AST, the function returns null n case of an error
+     *
+     * @return The AST, the function returns null in case of an error
      */
     public Expr parse() {
         try {
@@ -61,11 +59,12 @@ public class Parser {
     // expression    → equality
     private Expr expression() {
         return equality();
-        
+
     }
 
     /**
      * Handles equality expressions
+     *
      * @return The parsed expression
      */
     // equality     → comparison ( ( "!=" | "==" ) comparison )*
@@ -89,6 +88,7 @@ public class Parser {
 
     /**
      * Handles comparison expressions
+     *
      * @return The parsed expression
      */
     // comparison    → term ( ( ">" | ">=" | "<" | "<=" ) term )*
@@ -111,6 +111,7 @@ public class Parser {
 
     /**
      * Handles term (addition, subtraction) expressions
+     *
      * @return The parsed expression
      */
     // term     → factor ( ( "-" | "+" ) factor )*
@@ -121,6 +122,7 @@ public class Parser {
     /**
      * Handles factor (division, multiplication) expressions <br />
      * SLASH (division) and STAR (multiplication) are lower in the tree, so they have higher precedence
+     *
      * @return The parsed expression
      */
     // factor    → unary ( ( "/" | "*" ) unary )*
@@ -130,6 +132,7 @@ public class Parser {
 
     /**
      * Handles unary (negation, boolean reverse?) expressions
+     *
      * @return The parsed expression
      */
     // unary          → ( "!" | "-" ) unary
@@ -166,7 +169,8 @@ public class Parser {
 
     /**
      * Consumes the expected token, if it's not the expected token an error is thrown with a message
-     * @param type The expected type
+     *
+     * @param type    The expected type
      * @param message The error message to be given
      * @return The consumed token
      */
@@ -178,7 +182,8 @@ public class Parser {
 
     /**
      * A function that creates a ParseError
-     * @param token The token at which the error was found
+     *
+     * @param token   The token at which the error was found
      * @param message The message that is to be given to the user
      * @return A ParseError (to be caught in synchronisation)
      */
@@ -205,8 +210,9 @@ public class Parser {
 
     /**
      * Helper method for parsing left-associative series of binary operators
+     *
      * @param parserFunction The function to use for parsing the operands
-     * @param matchedTypes The operator types to match for
+     * @param matchedTypes   The operator types to match for
      * @return The resulting expression
      */
     private Expr binaryExpr(Supplier<Expr> parserFunction, TokenType... matchedTypes) {
@@ -224,6 +230,7 @@ public class Parser {
     /**
      * Checks if the current token has any of the given types
      * if it matches it consumes the Token and advanced to the next
+     *
      * @param types The types to match for
      * @return Does one of the type match
      */
@@ -240,6 +247,7 @@ public class Parser {
 
     /**
      * Checks if the current token is of the given type without consuming it
+     *
      * @param type the type to match for
      * @return Does the type match
      */
@@ -250,6 +258,7 @@ public class Parser {
 
     /**
      * Advances ths index to the next token in the source
+     *
      * @return The consumed token
      */
     private Token advance() {
@@ -259,6 +268,7 @@ public class Parser {
 
     /**
      * Checks if EOF was reached
+     *
      * @return The value
      */
     private boolean isAtEnd() {
@@ -267,6 +277,7 @@ public class Parser {
 
     /**
      * Returns the token at the current index without consuming it
+     *
      * @return The token at the current index
      */
     private Token peek() {
@@ -275,9 +286,13 @@ public class Parser {
 
     /**
      * Returns the token at the previous index without consuming it
+     *
      * @return The token at the previous index
      */
     private Token previous() {
         return tokens.get(current - 1);
+    }
+
+    private static class ParseError extends RuntimeException {
     }
 }
