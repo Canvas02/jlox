@@ -1,5 +1,6 @@
 package com.canvas.lox;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -32,6 +33,7 @@ public class Parser {
     //               | primary
     // primary        → NUMBER | STRING | "true" | "false" | "nil"
     //               | "(" expression ")"
+    //               | IDENTIFIERS
 
     private final List<Token> tokens;
     /**
@@ -48,12 +50,57 @@ public class Parser {
      *
      * @return The AST, the function returns null in case of an error
      */
-    public Expr parse() {
+    // program        → statement* EOF ;
+    public List<Stmt> parse() {
+        List<Stmt> statements = new ArrayList<>();
+        while (!isAtEnd()) {
+            statements.add(declaration());
+        }
+
+        return statements;
+    }
+
+    private Stmt declaration() {
         try {
-            return expression();
+            if (match(VAR)) return varDeclaration();
+
+            return statement();
         } catch (ParseError error) {
+            synchronise();
             return null;
         }
+    }
+
+    private Stmt varDeclaration() {
+        Token name = consume(IDENTIFIER, "Expected variable name");
+
+        Expr initializer = null;
+        if (match(EQUAL)) {
+            initializer = expression();
+        }
+
+        consume(SEMICOLIN, "Expected a ';' after variable declaration");
+        return new Stmt.Var(name, initializer);
+    }
+
+    // statement      → exprStmt
+    //               | printStmt ;
+    private Stmt statement() {
+        if (match(PRINT)) return printStatement();
+
+        return expressionStatement();
+    }
+
+    private Stmt printStatement() {
+        Expr value = expression();
+        consume(SEMICOLIN, "Expect ';' after value.");
+        return new Stmt.Print(value);
+    }
+
+    private Stmt expressionStatement() {
+        Expr value = expression();
+        consume(SEMICOLIN, "Expect ';' after value.");
+        return new Stmt.Expression(value);
     }
 
     // expression    → equality
@@ -156,6 +203,10 @@ public class Parser {
 
         if (match(NUMBER, STRING)) {
             return new Expr.Literal(previous().literal);
+        }
+
+        if (match(IDENTIFIER)) {
+            return new Expr.Variable(previous());
         }
 
         if (match(LEFT_PEREN)) {

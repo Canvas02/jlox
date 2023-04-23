@@ -1,15 +1,21 @@
 package com.canvas.lox;
 
-public class Interpreter implements Expr.Visitor<Object> {
-    public void interpret(Expr expression) {
+import java.util.List;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
+    public void interpret(List<Stmt> statements) {
         try {
-            Object value = evaluate(expression);
-            System.out.println(stringify(value));
+            for (var statement : statements) {
+                execute(statement);
+            }
         } catch (RuntimeError error) {
             Lox.runtimeError(error);
         }
     }
 
+    private void execute(Stmt stmt) {
+        stmt.accept(this);
+    }
 
     @Override
     public Object visitBinaryExpr(Expr.Binary expr) {
@@ -106,6 +112,31 @@ public class Interpreter implements Expr.Visitor<Object> {
 
         // Unreachable
         Helper.unreachable();
+        return null;
+    }
+
+    @Override
+    public Object visitVariableExpr(Expr.Variable expr) {
+        Helper.unimplemented();
+        return null;
+    }
+
+    @Override
+    public Void visitExpressionStmt(Stmt.Expression stmt) {
+        evaluate(stmt.expression);
+        return null;
+    }
+
+    @Override
+    public Void visitPrintStmt(Stmt.Print stmt) {
+        var object = evaluate(stmt.expression);
+        System.out.println(stringify(object));
+        return null;
+    }
+
+    @Override
+    public Void visitVarStmt(Stmt.Var stmt) {
+        Helper.unimplemented();
         return null;
     }
 
