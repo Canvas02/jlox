@@ -20,19 +20,19 @@ public class Interpreter implements Expr.Visitor<Object> {
             // Comparison
             case GREATER -> {
                 checkNumberOperands(expr.operator, right, left);
-                return (double)left > (double)right;
+                return (double) left > (double) right;
             }
             case GREATER_EQUAL -> {
                 checkNumberOperands(expr.operator, right, left);
-                return (double)left >= (double)right;
+                return (double) left >= (double) right;
             }
-            case LESS ->  {
+            case LESS -> {
                 checkNumberOperands(expr.operator, right, left);
-                return (double)left < (double)right;
+                return (double) left < (double) right;
             }
             case LESS_EQUAL -> {
                 checkNumberOperands(expr.operator, right, left);
-                return (double)left <= (double)right;
+                return (double) left <= (double) right;
             }
 
             // Equality
@@ -50,11 +50,11 @@ public class Interpreter implements Expr.Visitor<Object> {
             }
             case PLUS -> {
                 if (left instanceof Double && right instanceof Double) {
-                    return (double)left + (double) right;
+                    return (double) left + (double) right;
                 }
 
                 if (left instanceof String && right instanceof String) {
-                    return (String)left + (String) right;
+                    return (String) left + (String) right;
                 }
 
                 // else
