@@ -15,6 +15,7 @@ public class GenerateAst {
 
         String outputDir = args[0];
 
+        /*
         defineAst(outputDir, "Expr", Arrays.asList(
                 "Assign     : Token name, Expr value",
                 "Binary     : Expr left, Token operator, Expr right",
@@ -23,14 +24,14 @@ public class GenerateAst {
                 "Unary      : Token operator, Expr right",
                 "Variable   : Token name"
         ));
-
-        /*
-        defineAst(outputDir, "Stmt", Arrays.asList(
-                "Expression     : Expr expression",
-                "Print          : Expr expression",
-                "Var            : Token name, Expr initializer"
-        ));
          */
+
+        defineAst(outputDir, "Stmt", Arrays.asList(
+                "Block      : List<Stmt> statements",
+                "Expression : Expr expression",
+                "Print      : Expr expression",
+                "Var        : Token name, Expr initializer"
+        ));
 
         System.out.printf("Finished Generating to %s\n", outputDir);
     }
@@ -50,8 +51,10 @@ public class GenerateAst {
             String outputDir,
             String baseName,
             List<String> types) throws IOException {
-        String path = outputDir + "/" + baseName + ".java"; // PS: will this work on windows?
+        String path = outputDir + "/" + baseName + ".java"; // will this work on windows? (Yes it does)
         var writer = new PrintWriter(path, StandardCharsets.UTF_8);
+
+        System.out.printf("Generating %s.java\n", baseName);
 
         writer.println("package com.canvas.lox;");
         writer.println();
