@@ -1,1 +1,1 @@
-## Me going through Unit 1 of [crafting interpreters](https://craftinginterpreters.com)
+## Me going through Unit 2 of [crafting interpreters](https://craftinginterpreters.com)
