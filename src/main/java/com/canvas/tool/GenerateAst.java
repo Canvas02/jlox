@@ -6,6 +6,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A helper class used to generate the Stmt.java and Expr.java files
+ *
+ * @author Canvas02
+ */
 public class GenerateAst {
     public static void main(String[] args) throws IOException {
         if (args.length != 1) {
@@ -15,21 +20,27 @@ public class GenerateAst {
 
         String outputDir = args[0];
 
+        /*
         defineAst(outputDir, "Expr", Arrays.asList(
                 "Assign     : Token name, Expr value",
                 "Binary     : Expr left, Token operator, Expr right",
+                "Call       : Expr callee, Token paren, List<Expr> arguments",
                 "Grouping   : Expr expression",
                 "Literal    : Object value",
                 "Logical    : Expr left, Token operator, Expr right",
                 "Unary      : Token operator, Expr right",
                 "Variable   : Token name"
         ));
+        */
 
         defineAst(outputDir, "Stmt", Arrays.asList(
                 "Block      : List<Stmt> statements",
                 "If         : Expr condition, Stmt thenBranch, Stmt elseBranch",
+                "Function   : Token name, List<Token> params," +
+                        " List<Stmt> body",
                 "Expression : Expr expression",
                 "Print      : Expr expression",
+                "Return     : Token keyword, Expr value",
                 "Var        : Token name, Expr initializer",
                 "While      : Expr condition, Stmt body"
         ));

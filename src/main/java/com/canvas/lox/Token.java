@@ -1,5 +1,11 @@
 package com.canvas.lox;
 
+/**
+ * A lox Token used by the <code>Parser</code>
+ *
+ * @author Canavs02
+ * @see Scanner
+ */
 public class Token {
     final TokenType type;
     final String lexeme;

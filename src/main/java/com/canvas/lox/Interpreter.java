@@ -1,10 +1,41 @@
 package com.canvas.lox;
 
+import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An Interpreter that interprets lox expressions and statements
+ *
+ * @author Canavs02
+ */
 public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
-    private Environment environment = new Environment();
+    final Environment globals = new Environment();
+    private Environment environment = globals;
 
+    Interpreter() {
+        globals.define("clock", new LoxCallable() {
+            @Override
+            public int arity() {
+                return 0;
+            }
+
+            @Override
+            public Object call(Interpreter interpreter, List<Object> arguments) {
+                return (double) System.currentTimeMillis() / 1000.0;
+            }
+
+            @Override
+            public String toString() {
+                return "<native fn>";
+            }
+        });
+    }
+
+    /**
+     * Interprets a list of statement, throws a <code>Lox.runtimeError</code> when an error occurs
+     *
+     * @param statements the statements that are going to be executed
+     */
     public void interpret(List<Stmt> statements) {
         try {
             for (var statement : statements) {
@@ -69,14 +100,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
                 }
 
                 if (left instanceof String && right instanceof String) {
-                    return (String) left + (String) right;
+                    return left + (String) right;
                 }
 
                 // else
-                throw new RuntimeError(
-                        expr.operator,
-                        "Operands must be two numbers or two strings"
-                );
+                throw new RuntimeError(expr.operator, "Operands must be two numbers or two strings");
             }
 
             case SLASH -> {
@@ -92,6 +120,36 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         // Unreachable
         Helper.unreachable();
         return null;
+    }
+
+    @Override
+    public Object visitCallExpr(Expr.Call expr) {
+        Object callee = evaluate(expr.callee);
+
+        List<Object> arguments = new ArrayList<>(expr.arguments.size());
+        for (var argument : expr.arguments) {
+            arguments.add(evaluate(argument));
+        }
+
+        // Error checking
+        // The 'function' in here is same as 'var function = (LoxCallable) callee' after the statement
+        if (!(callee instanceof LoxCallable function)) {
+            throw new RuntimeError(expr.paren, "Can only call functions and classes");
+        }
+
+        // Check for function arity (n of parameters vs n of arguments)
+        if (arguments.size() != function.arity()) {
+            throw new RuntimeError(
+                    expr.paren,
+                    String.format(
+                            "Expected %d arguments but got %d.",
+                            function.arity(),
+                            arguments.size()
+                    )
+            );
+        }
+
+        return function.call(this, arguments);
     }
 
 
@@ -150,15 +208,30 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 
     @Override
     public Void visitIfStmt(Stmt.If stmt) {
-        if (isTruthy(evaluate(stmt.condition))) {
+        if (isTruthy(evaluate(stmt.condition))) {   // If 'true' evaluate the 'then' branch
             execute(stmt.thenBranch);
-        } else {
+        } else if (stmt.elseBranch != null) {   // Else if there is an 'else' branch, evaluate it
             execute(stmt.elseBranch);
         }
+
+        return null;    // If 'false' and there's no 'else' branch
+    }
+
+    @Override
+    public Void visitFunctionStmt(Stmt.Function stmt) {
+        var function = new LoxFunction(stmt, environment);
+        environment.define(stmt.name.lexeme, function);
+
         return null;
     }
 
-    private void executeBlock(List<Stmt> statements, Environment environment) {
+    /**
+     * Executes a block (a list of statements), with a new environment
+     *
+     * @param statements  The statements to execute
+     * @param environment The current (outer) environment
+     */
+    public void executeBlock(List<Stmt> statements, Environment environment) {
         Environment previous = this.environment;
 
         try {
@@ -183,6 +256,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
         var object = evaluate(stmt.expression);
         System.out.println(stringify(object));
         return null;
+    }
+
+    @Override
+    public Void visitReturnStmt(Stmt.Return stmt) {
+        Object value = null;
+        if (stmt.value != null) value = evaluate(stmt.value);
+
+        // Unwind the stack
+        throw new Return(value);
     }
 
     @Override

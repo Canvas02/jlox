@@ -1,13 +1,13 @@
 package com.canvas.lox;
 
 /**
- * General helper functions
+ * A class that contains useful helper functions
  */
 public class Helper {
     /**
-     * Get the current line number.
+     * Gets the line number from where it's called
      *
-     * @return int - Current line number.
+     * @return Current line number.
      */
     // Taken from: https://stackoverflow.com/a/115027/16854783
     public static int getLineNumber() {
@@ -15,7 +15,7 @@ public class Helper {
     }
 
     /**
-     * Used to mark unreachable code, if ever reached it prints filename + line and exist with -1
+     * Used to mark unreachable code, if ever reached it prints filename + line and exits with -1
      */
     public static void unreachable() {
         // Can't use getLineNumber here, because then that would add to the stack
@@ -27,6 +27,9 @@ public class Helper {
         // system.exit(-1);.
     }
 
+    /**
+     * Used to mark unimplemented code, if ever reached it prints filename + line and exits with -1
+     */
     public static void unimplemented() {
         // Can't use getLineNumber here, because then that would add to the stack
         System.err.printf(
@@ -62,7 +65,7 @@ public class Helper {
         }
 
         Unimplemented() {
-            super("Unimplemented code");
+            super("Unimplemented code reached");
         }
     }
 }

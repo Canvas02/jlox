@@ -8,6 +8,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * The lox command line tool
+ *
+ * @author Canvas02
+ */
 public class Lox {
     private static final Interpreter interpreter = new Interpreter();
     private static boolean hadError = false;
@@ -77,11 +82,23 @@ public class Lox {
         }
     }
 
+    /**
+     * Used when a runtime error is hit, prints to stderr and enters 'panic mode'
+     *
+     * @param error The runtime error
+     */
     public static void runtimeError(RuntimeError error) {
         System.err.printf("%s\n[line %d]\n", error.getMessage(), error.token.line);
         hadRuntimeError = true;
     }
 
+    /**
+     * Used when a error is hit, prints to stderr and enters 'panic mode'
+     *
+     * @param line  The line where the error occurred
+     * @param where Where the error occurred (at the start, at the end, etc..)
+     * @param msg   The error message
+     */
     private static void report(int line, String where, String msg) {
         System.err.println(
                 "[line " + line + "] Error" + where + ": " + msg
